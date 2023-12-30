@@ -1,10 +1,21 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/wait.h>
+#include <mqueue.h>
+#include <assert.h>
 
 #include <system_server.h>
 #include <gui.h>
 #include <input.h>
 #include <web_server.h>
+#include <toy_message.h>
+
+#define NUM_MESSAGES 10
+
+static mqd_t watchdog_queue;
+static mqd_t monitor_queue;
+static mqd_t disk_queue;
+static mqd_t camera_queue;
 
 static void
 sigchldHandler(int sig)
@@ -36,6 +47,7 @@ int main()
     int sigCnt;
     sigset_t blockMask, emptyMask;
     struct sigaction sa;
+    int retcode;
 
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
@@ -46,6 +58,11 @@ int main()
     }
 
     printf("메인 함수입니다.\n");
+
+    // 여기에 구현하세요.
+    /* 메시지 큐를 생성한다. */
+    
+
     printf("시스템 서버를 생성합니다.\n");
     spid = create_system_server();
     printf("웹 서버를 생성합니다.\n");
