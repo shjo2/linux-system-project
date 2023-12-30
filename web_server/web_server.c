@@ -12,14 +12,14 @@ int create_web_server()
     printf("여기서 Web Server 프로세스를 생성합니다.\n");
 
     /* fork + exec 를 이용하세요 */
-    /* exec으로 filebrowser을 실행 하세요. */
-    /* execl("/usr/local/bin/filebrowser", "filebrowser", "-p", "8282", (char *) NULL)) */
-    switch(systemPid = fork()) {
+    /* exec으로 google-chrome-stable을 실행 하세요. */
+
+    switch (systemPid = fork()) {
     case -1:
-        printf("Error\n");
+        printf("fork failed\n");
     case 0:
-        if (execl("/usr/local/bin/filebrowser", "filebrowser", "-p", "8001", (char *) NULL)) {
-            printf("Error execl\n");
+        if (execl("/usr/local/bin/filebrowser", "filebrowser", "-p", "8282", (char *) NULL)) {
+            printf("execfailed\n");
         }
         break;
     default:
@@ -28,3 +28,4 @@ int create_web_server()
 
     return 0;
 }
+ 
