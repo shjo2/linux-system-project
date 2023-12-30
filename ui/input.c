@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <mqueue.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <system_server.h>
 #include <gui.h>
@@ -18,6 +21,7 @@
 #include <web_server.h>
 #include <execinfo.h>
 #include <toy_message.h>
+#include <shared_memory.h>
 
 #define TOY_TOK_BUFSIZE 64
 #define TOY_TOK_DELIM " \t\r\n\a"
@@ -38,6 +42,7 @@ static mqd_t watchdog_queue;
 static mqd_t monitor_queue;
 static mqd_t disk_queue;
 static mqd_t camera_queue;
+static shm_sensor_t *the_sensor_info = NULL;
 
 void segfault_handler(int sig_num, siginfo_t * info, void * ucontext) {
   void * array[50];
@@ -79,12 +84,27 @@ void segfault_handler(int sig_num, siginfo_t * info, void * ucontext) {
  */
 void *sensor_thread(void* arg)
 {
+    int mqretcode;
     char *s = arg;
+    toy_msg_t msg;
+    int shmid = toy_shm_get_keyid(SHM_KEY_SENSOR);
 
     printf("%s", s);
 
     while (1) {
         posix_sleep_ms(5000);
+        // 현재 고도/온도/기압 정보를  SYS V shared memory에 저장 후
+        // monitor thread에 메시지 전송한다.
+        if (the_sensor_info != NULL) {
+            the_sensor_info->temp = 35;
+            the_sensor_info->press = 55;
+            the_sensor_info->humidity = 80;
+        }
+        msg.msg_type = 1;
+        msg.param1 = shmid;
+        msg.param2 = 0;
+        mqretcode = mq_send(monitor_queue, (char *)&msg, sizeof(msg), 0);
+        assert(mqretcode == 0);
     }
 
     return 0;
@@ -98,6 +118,7 @@ int toy_send(char **args);
 int toy_mutex(char **args);
 int toy_shell(char **args);
 int toy_message_queue(char **args);
+int toy_read_elf_header(char **args);
 int toy_exit(char **args);
 
 char *builtin_str[] = {
@@ -105,6 +126,7 @@ char *builtin_str[] = {
     "mu",
     "sh",
     "mq",
+    "elf",
     "exit"
 };
 
@@ -113,6 +135,7 @@ int (*builtin_func[]) (char **) = {
     &toy_mutex,
     &toy_shell,
     &toy_message_queue,
+    &toy_read_elf_header,
     &toy_exit
 };
 
@@ -160,6 +183,26 @@ int toy_message_queue(char **args)
 
     return 1;
 }
+
+int toy_read_elf_header(char **args)
+{
+    int mqretcode;
+    toy_msg_t msg;
+    int in_fd;
+    char *contents = NULL;
+    size_t contents_sz;
+    struct stat st;
+    Elf64Hdr *map;
+
+    in_fd = open("./sample/sample.elf", O_RDONLY);
+	if ( in_fd < 0 ) {
+        printf("cannot open ./sample/sample.elf\n");
+        return 1;
+    }
+
+    return 1;
+}
+
 
 int toy_exit(char **args)
 {
@@ -298,7 +341,16 @@ int input()
 
     sigaction(SIGSEGV, &sa, NULL); /* ignore whether it works or not */
 
-    /* 메시지 큐를 오픈 한다. */
+    /* 센서 정보를 공유하기 위한, 시스템 V 공유 메모리를 생성한다 */
+    the_sensor_info = (shm_sensor_t *)toy_shm_create(SHM_KEY_SENSOR, sizeof(shm_sensor_t));
+    if ( the_sensor_info == (void *)-1 ) {
+        the_sensor_info = NULL;
+        printf("Error in shm_create SHMID=%d SHM_KEY_SENSOR\n", SHM_KEY_SENSOR);
+    }
+
+    /* 메시지 큐를 오픈 한다.
+     * 하지만, 사실 fork로 생성했기 때문에 파일 디스크립터 공유되었음. 따따서, extern으로 사용 가능
+    */
     watchdog_queue = mq_open("/watchdog_queue", O_RDWR);
     assert(watchdog_queue != -1);
     monitor_queue = mq_open("/monitor_queue", O_RDWR);
