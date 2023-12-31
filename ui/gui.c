@@ -17,9 +17,9 @@ int create_gui()
 
     switch (systemPid = fork()) {
     case -1:
-        printf("Failed to fork on GUI.\n");
+        printf("fork failed\n");
     case 0:
-        if (execl("/usr/bin/chromium-browser", "chromium-browser", "http://localhost:8282", NULL)) {
+        if (execl("/usr/bin/google-chrome-stable", "google-chrome-stable", "http://localhost:8282", NULL)) {
             printf("execfailed\n");
         }
         break;

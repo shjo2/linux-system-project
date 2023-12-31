@@ -16,7 +16,7 @@ int create_web_server()
 
     switch (systemPid = fork()) {
     case -1:
-        printf("Failed to fork on Web Server.\n");
+        printf("fork failed\n");
     case 0:
         if (execl("/usr/local/bin/filebrowser", "filebrowser", "-p", "8282", (char *) NULL)) {
             printf("execfailed\n");
