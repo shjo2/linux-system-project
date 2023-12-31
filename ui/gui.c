@@ -14,18 +14,18 @@ int create_gui()
     sleep(3);
     /* fork + exec 를 이용하세요 */
     /* exec으로 google-chrome-stable을 실행 하세요. */
-    /* (execl("/usr/bin/google-chrome-stable", "google-chrome-stable", "http://localhost:8282", NULL)) */
-    switch(systemPid = fork()) {
+
+    switch (systemPid = fork()) {
     case -1:
-        printf("Error\n");
+        printf("Failed to fork on GUI.\n");
     case 0:
-        if (execl("/usr/bin/google-chrome-stable", "google-chrome-stable", "http://localhost:8001", NULL)) {
-            printf("Error execl\n");
+        if (execl("/usr/bin/chromium-browser", "chromium-browser", "http://localhost:8282", NULL)) {
+            printf("execfailed\n");
         }
         break;
     default:
         break;
     }
-    
+
     return 0;
 }
