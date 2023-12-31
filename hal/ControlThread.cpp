@@ -23,7 +23,6 @@ int ControlThread::takePicture()
 
     return 0;
 }
-<<<<<<< HEAD
 
 int ControlThread::dump()
 {
@@ -31,5 +30,3 @@ int ControlThread::dump()
 
     return 0;
 }
-=======
->>>>>>> origin/master

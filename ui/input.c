@@ -22,18 +22,12 @@
 #include <execinfo.h>
 #include <toy_message.h>
 #include <shared_memory.h>
-<<<<<<< HEAD
 // #include <dump_state.h>
-=======
->>>>>>> origin/master
 
 #define TOY_TOK_BUFSIZE 64
 #define TOY_TOK_DELIM " \t\r\n\a"
 #define TOY_BUFFSIZE 1024
-<<<<<<< HEAD
 #define DUMP_STATE 2
-=======
->>>>>>> origin/master
 
 typedef struct _sig_ucontext {
     unsigned long uc_flags;
@@ -100,11 +94,8 @@ void *sensor_thread(void* arg)
     printf("%s", s);
 
     while (1) {
-<<<<<<< HEAD
         posix_sleep_ms(10000);
-=======
         posix_sleep_ms(5000);
->>>>>>> origin/master
         // 현재 고도/온도/기압 정보를  SYS V shared memory에 저장 후
         // monitor thread에 메시지 전송한다.
         if (the_sensor_info != NULL) {
@@ -131,10 +122,7 @@ int toy_mutex(char **args);
 int toy_shell(char **args);
 int toy_message_queue(char **args);
 int toy_read_elf_header(char **args);
-<<<<<<< HEAD
 int toy_dump_state(char **args);
-=======
->>>>>>> origin/master
 int toy_exit(char **args);
 
 char *builtin_str[] = {
@@ -143,10 +131,7 @@ char *builtin_str[] = {
     "sh",
     "mq",
     "elf",
-<<<<<<< HEAD
     "dump",
-=======
->>>>>>> origin/master
     "exit"
 };
 
@@ -156,10 +141,7 @@ int (*builtin_func[]) (char **) = {
     &toy_shell,
     &toy_message_queue,
     &toy_read_elf_header,
-<<<<<<< HEAD
     &toy_dump_state,
-=======
->>>>>>> origin/master
     &toy_exit
 };
 
@@ -223,7 +205,6 @@ int toy_read_elf_header(char **args)
         printf("cannot open ./sample/sample.elf\n");
         return 1;
     }
-<<<<<<< HEAD
     /* 여기서 mmap을 이용하여 파일 내용을 읽으세요.
      * fread 사용 X
      */
@@ -243,13 +224,10 @@ int toy_read_elf_header(char **args)
         printf("Program header table file offset : %ld\n", map->e_phoff);
         munmap(map, contents_sz);
     }
-=======
->>>>>>> origin/master
 
     return 1;
 }
 
-<<<<<<< HEAD
 int toy_dump_state(char **args)
 {
     int mqretcode;
@@ -265,8 +243,6 @@ int toy_dump_state(char **args)
 
     return 1;
 }
-=======
->>>>>>> origin/master
 
 int toy_exit(char **args)
 {

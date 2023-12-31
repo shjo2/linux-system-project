@@ -10,10 +10,7 @@ public:
 public:
     // 사진 찍는 메소드
     int takePicture();
-<<<<<<< HEAD
     int dump();
-=======
->>>>>>> origin/master
 
 private:
 

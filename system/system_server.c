@@ -7,7 +7,6 @@
 #include <sys/time.h>
 #include <time.h>
 #include <mqueue.h>
-<<<<<<< HEAD
 #include <sys/inotify.h>
 #include <limits.h>
 #include <sys/stat.h>
@@ -18,8 +17,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <dirent.h>
-=======
->>>>>>> origin/master
 
 #include <system_server.h>
 #include <gui.h>
@@ -28,13 +25,10 @@
 #include <camera_HAL.h>
 #include <toy_message.h>
 #include <shared_memory.h>
-<<<<<<< HEAD
 // #include <dump_state.h>
 
 #define BUF_LEN 1024
 #define TOY_TEST_FS "./fs"
-=======
->>>>>>> origin/master
 
 pthread_mutex_t system_loop_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  system_loop_cond  = PTHREAD_COND_INITIALIZER;
@@ -133,10 +127,7 @@ void *watchdog_thread(void* arg)
 }
 
 #define SENSOR_DATA 1
-<<<<<<< HEAD
 #define DUMP_STATE 2
-=======
->>>>>>> origin/master
 
 void *monitor_thread(void* arg)
 {
@@ -161,20 +152,16 @@ void *monitor_thread(void* arg)
             printf("sensor info: %d\n", the_sensor_info->press);
             printf("sensor humidity: %d\n", the_sensor_info->humidity);
             toy_shm_detach(the_sensor_info);
-<<<<<<< HEAD
         } else if (msg.msg_type == DUMP_STATE) {
              //dumpstate();
         } else {
             printf("monitor_thread: unknown message. xxx\n");
-=======
->>>>>>> origin/master
         }
     }
 
     return 0;
 }
 
-<<<<<<< HEAD
 static long get_directory_size(char *dirname)
 {
     DIR *dir = opendir(dirname);
@@ -206,45 +193,6 @@ static long get_directory_size(char *dirname)
     return total_size;
 }
 
-
-void *disk_service_thread(void* arg)
-{
-    char *s = arg;
-    int inotifyFd, wd, j;
-    char buf[BUF_LEN] __attribute__ ((aligned(8)));
-    ssize_t numRead;
-    char *p;
-    struct inotify_event *event;
-    char *directory = TOY_TEST_FS;
-    int total_size;
-
-    printf("%s", s);
-
-    inotifyFd = inotify_init();                 /* Create inotify instance */
-    if (inotifyFd == -1)
-        return 0;
-
-    wd = inotify_add_watch(inotifyFd, TOY_TEST_FS, IN_CREATE);
-    if (wd == -1)
-        return 0;
-
-    for (;;) {                                  /* Read events forever */
-        numRead = read(inotifyFd, buf, BUF_LEN);
-        if (numRead == 0) {
-            printf("read() from inotify fd returned 0!");
-            return 0;
-        }
-
-        if (numRead == -1)
-            return 0;
-
-        for (p = buf; p < buf + numRead; ) {
-            event = (struct inotify_event *) p;
-            p += sizeof(struct inotify_event) + event->len;
-        }
-        total_size = get_directory_size(TOY_TEST_FS);
-        printf("directory size: %d\n", total_size);
-=======
 void *disk_service_thread(void* arg)
 {
     char *s = arg;
@@ -274,8 +222,6 @@ void *disk_service_thread(void* arg)
             printf("%s", buf);
         }
         pclose(apipe);
-
->>>>>>> origin/master
     }
 
     return 0;
@@ -302,13 +248,10 @@ void *camera_service_thread(void* arg)
         printf("msg.param2: %d\n", msg.param2);
         if (msg.msg_type == CAMERA_TAKE_PICTURE) {
             toy_camera_take_picture();
-<<<<<<< HEAD
         } else if (msg.msg_type == DUMP_STATE) {
             toy_camera_dump();
         } else {
             printf("camera_service_thread: unknown message. xxx\n");
-=======
->>>>>>> origin/master
         }
     }
 
@@ -360,10 +303,7 @@ int system_server()
 
     printf("system init done.  waiting...");
 
-<<<<<<< HEAD
-=======
     // 여기에 구현하세요... 여기서 cond wait로 대기한다. 10초 후 알람이 울리면 <== system 출력
->>>>>>> origin/master
     pthread_mutex_lock(&system_loop_mutex);
     while (system_loop_exit == false) {
         pthread_cond_wait(&system_loop_cond, &system_loop_mutex);
