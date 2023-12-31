@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+<<<<<<< HEAD
       {
           "name": "C Debug",
           "type": "cppdbg",
@@ -10,5 +11,27 @@
           "args": [],
           "stopAtEntry": true
       }
+=======
+    {
+      "name": "toy_system",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/toy_system",
+      "args": [
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+    },
+>>>>>>> origin/master
   ]
 }

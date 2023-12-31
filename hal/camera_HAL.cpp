@@ -31,8 +31,11 @@ int toy_camera_take_picture(void)
 {
     return control_thread->takePicture();
 }
+<<<<<<< HEAD
 
 int toy_camera_dump(void)
 {
     return control_thread->dump();
 }
+=======
+>>>>>>> origin/master

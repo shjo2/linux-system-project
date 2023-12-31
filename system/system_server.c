@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <mqueue.h>
+<<<<<<< HEAD
 #include <sys/inotify.h>
 #include <limits.h>
 #include <sys/stat.h>
@@ -17,6 +18,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <dirent.h>
+=======
+>>>>>>> origin/master
 
 #include <system_server.h>
 #include <gui.h>
@@ -25,10 +28,13 @@
 #include <camera_HAL.h>
 #include <toy_message.h>
 #include <shared_memory.h>
+<<<<<<< HEAD
 // #include <dump_state.h>
 
 #define BUF_LEN 1024
 #define TOY_TEST_FS "./fs"
+=======
+>>>>>>> origin/master
 
 pthread_mutex_t system_loop_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  system_loop_cond  = PTHREAD_COND_INITIALIZER;
@@ -127,7 +133,10 @@ void *watchdog_thread(void* arg)
 }
 
 #define SENSOR_DATA 1
+<<<<<<< HEAD
 #define DUMP_STATE 2
+=======
+>>>>>>> origin/master
 
 void *monitor_thread(void* arg)
 {
@@ -152,16 +161,20 @@ void *monitor_thread(void* arg)
             printf("sensor info: %d\n", the_sensor_info->press);
             printf("sensor humidity: %d\n", the_sensor_info->humidity);
             toy_shm_detach(the_sensor_info);
+<<<<<<< HEAD
         } else if (msg.msg_type == DUMP_STATE) {
              //dumpstate();
         } else {
             printf("monitor_thread: unknown message. xxx\n");
+=======
+>>>>>>> origin/master
         }
     }
 
     return 0;
 }
 
+<<<<<<< HEAD
 static long get_directory_size(char *dirname)
 {
     DIR *dir = opendir(dirname);
@@ -231,6 +244,38 @@ void *disk_service_thread(void* arg)
         }
         total_size = get_directory_size(TOY_TEST_FS);
         printf("directory size: %d\n", total_size);
+=======
+void *disk_service_thread(void* arg)
+{
+    char *s = arg;
+    FILE* apipe;
+    char buf[1024];
+    char cmd[]="df -h ./" ;
+    int mqretcode;
+    toy_msg_t msg;
+
+    printf("%s", s);
+
+    while (1) {
+        mqretcode = (int)mq_receive(disk_queue, (void *)&msg, sizeof(toy_msg_t), 0);
+        assert(mqretcode >= 0);
+        printf("disk_service_thread: 메시지가 도착했습니다.\n");
+        printf("msg.type: %d\n", msg.msg_type);
+        printf("msg.param1: %d\n", msg.param1);
+        printf("msg.param2: %d\n", msg.param2);
+
+        /* popen 사용하여 10초마다 disk 잔여량 출력
+         * popen으로 shell을 실행하면 성능과 보안 문제가 있음
+         * 향후 파일 관련 시스템 콜 시간에 개선,
+         * 하지만 가끔 빠르게 테스트 프로그램 또는 프로토 타입 시스템 작성 시 유용
+         */
+        apipe = popen(cmd, "r");
+        while (fgets( buf, 1024, apipe) ) {
+            printf("%s", buf);
+        }
+        pclose(apipe);
+
+>>>>>>> origin/master
     }
 
     return 0;
@@ -257,10 +302,13 @@ void *camera_service_thread(void* arg)
         printf("msg.param2: %d\n", msg.param2);
         if (msg.msg_type == CAMERA_TAKE_PICTURE) {
             toy_camera_take_picture();
+<<<<<<< HEAD
         } else if (msg.msg_type == DUMP_STATE) {
             toy_camera_dump();
         } else {
             printf("camera_service_thread: unknown message. xxx\n");
+=======
+>>>>>>> origin/master
         }
     }
 
@@ -312,6 +360,10 @@ int system_server()
 
     printf("system init done.  waiting...");
 
+<<<<<<< HEAD
+=======
+    // 여기에 구현하세요... 여기서 cond wait로 대기한다. 10초 후 알람이 울리면 <== system 출력
+>>>>>>> origin/master
     pthread_mutex_lock(&system_loop_mutex);
     while (system_loop_exit == false) {
         pthread_cond_wait(&system_loop_cond, &system_loop_mutex);

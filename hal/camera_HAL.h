@@ -9,7 +9,10 @@ extern "C" {
 
 int toy_camera_open(void);
 int toy_camera_take_picture(void);
+<<<<<<< HEAD
 int toy_camera_dump(void);
+=======
+>>>>>>> origin/master
 
 #ifdef __cplusplus
 } // extern "C"
